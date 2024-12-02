@@ -10,18 +10,25 @@ from utils import prepare_data
 from trainer import Trainer
 
 def define_argparser():
+    '''
+    명령줄 인수를 정의하고 파싱하는 함수
+    '''
     p = argparse.ArgumentParser()
 
+    # Model File path
     p.add_argument('--model_fn', required=True)
 
+    # Data Setttings
     p.add_argument('--data_path', required=True)
     p.add_argument('--seq_length', type=int, default=24)
     p.add_argument('--forecast_horizon', type=int, default=24)
 
+    # Training Settings
     p.add_argument('--n_epochs', type=int, default=5)
     p.add_argument('--batch_size', type=int, default=64)
     p.add_argument('--learning_rate', type=float, default=0.001)
 
+    # etc
     p.add_argument('--verbose', type=int, default=1)
 
     config = p.parse_args()
@@ -29,14 +36,15 @@ def define_argparser():
     return config
 
 def main(config):
+    # CUDA or CPU
     config.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    features = ['rh', 'p', 'wv']
-    target = 'T'
+    features = ['rh', 'p', 'wv']    # 입력 변수
+    target = 'T'                    # 예측 대상 변수
 
     # Load data and Preprocess
-    df = load_data(config, features, target)
-    (X_train, y_train), (X_test, y_test) = prepare_data(df, config, features, target)
+    df = load_data(config, features, target)    
+    (X_train, y_train), (X_test, y_test) = prepare_data(df, config, features, target)   
 
     # Model Initialize
     input_shape = X_train.shape[2]
