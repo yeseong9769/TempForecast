@@ -24,7 +24,7 @@ def define_argparser():
     p.add_argument('--forecast_horizon', type=int, default=24)
 
     # Training Settings
-    p.add_argument('--n_epochs', type=int, default=5)
+    p.add_argument('--n_epochs', type=int, default=50)
     p.add_argument('--batch_size', type=int, default=64)
     p.add_argument('--learning_rate', type=float, default=0.001)
 
@@ -65,11 +65,13 @@ def main(config):
     # Train
     trainer = Trainer(model, optimizer, crit)
     
-    trainer.train(
+    history = trainer.train(
         train_data=(X_train, y_train),
         valid_data=(X_test, y_test),
         config=config
     )
+
+    trainer.plot_history(history)
 
     # Save best model
     torch.save({
