@@ -1,7 +1,6 @@
-import numpy as np
+import numpy as np 
 import pandas as pd
 import torch
-from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import MinMaxScaler
 import matplotlib.pyplot as plt
 from datetime import datetime
@@ -79,14 +78,15 @@ def prepare_data(df, config, features, target):
     train_df = df[:train_size]
     valid_df = df[train_size:]
 
-    # 데이터 정규화(Regularization)
-    mm = MinMaxScaler()
-    ss = StandardScaler()
+    # MinMaxScaler를 사용하여 데이터 정규화
+    mm_features = MinMaxScaler()
+    mm_target = MinMaxScaler()
 
-    train_df[features] = ss.fit_transform(train_df[features])
-    train_df[target] = mm.fit_transform(train_df[target].values.reshape(-1, 1))
-    valid_df[features] = ss.transform(valid_df[features])
-    valid_df[target] = mm.transform(valid_df[target].values.reshape(-1, 1))
+    train_df[features] = mm_features.fit_transform(train_df[features])
+    train_df[target] = mm_target.fit_transform(train_df[target].values.reshape(-1, 1))
+    valid_df[features] = mm_features.transform(valid_df[features])
+    valid_df[target] = mm_target.transform(valid_df[target].values.reshape(-1, 1))
+    
     print(train_df.head())
     print(train_df[features].mean())
     print(train_df[features].std())

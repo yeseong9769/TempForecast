@@ -3,7 +3,7 @@ import torch
 import matplotlib.pyplot as plt
 from utils import load_data
 from model import WeatherPredicter
-from sklearn.preprocessing import MinMaxScaler, StandardScaler
+from sklearn.preprocessing import MinMaxScaler
 
 # 최신 모델 파일 찾기
 model_dir = "./models"
@@ -27,11 +27,12 @@ print(df.head())
 # 데이터 준비
 df = df.iloc[-24:]
 
-ss = StandardScaler()
-mm = MinMaxScaler()
+# MinMaxScaler로 특성과 타겟 모두 정규화
+mm_features = MinMaxScaler()
+mm_target = MinMaxScaler()
 
-df[features] = ss.fit_transform(df[features])
-df[target] = mm.fit_transform(df[target].values.reshape(-1, 1))
+df[features] = mm_features.fit_transform(df[features])
+df[target] = mm_target.fit_transform(df[target].values.reshape(-1, 1))
 df.drop(target, inplace=True, axis=1)
 
 print(df.head())
@@ -57,7 +58,8 @@ model.eval()
 with torch.no_grad():
     y_pred = model(seq_tensor)
 
-prediction = mm.inverse_transform(y_pred)
+# MinMaxScaler로 예측값 역변환
+prediction = mm_target.inverse_transform(y_pred)
 
 # 결과 시각화
 plt.figure(figsize=(10, 6))
