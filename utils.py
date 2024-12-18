@@ -1,10 +1,11 @@
 import numpy as np
 import pandas as pd
 import torch
-from torch.utils.data import Dataset, DataLoader
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import MinMaxScaler
 import matplotlib.pyplot as plt
+from datetime import datetime
+import os
 
 def load_data(config, features, target):
     """
@@ -30,7 +31,7 @@ def load_data(config, features, target):
     plt.xlabel("Date")
     plt.ylabel("Temperature")
     plt.title("Temperature over time")
-    plt.savefig("temperature.png")
+    plt.savefig("images/temperature.png")
 
     return df
 
@@ -104,3 +105,30 @@ def prepare_data(df, config, features, target):
     print("검증 데이터 시퀀스 형태:", X_test.shape, y_test.shape)
 
     return (X_train, y_train), (X_test, y_test)
+
+def generate_model_filename(config):
+    """설정값을 기반으로 모델 파일 이름 생성
+    
+    Args:
+        config: 학습 설정값을 담은 객체
+        
+    Returns:
+        str: 생성된 모델 파일 경로
+        
+    Example:
+        model_seq24_hor24_hid256_lay2_drop0.2_ep50_bat64_lr0.001_20231218_235959.pth
+    """
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    model_name = (
+        f"model_"
+        f"seq{config.seq_length}_"
+        f"hor{config.forecast_horizon}_"
+        f"hid{config.hidden_size}_"
+        f"lay{config.n_layers}_"
+        f"drop{config.dropout}_"
+        f"ep{config.n_epochs}_"
+        f"bat{config.batch_size}_"
+        f"lr{config.learning_rate}_"
+        f"{timestamp}.pth"
+    )
+    return os.path.join(config.model_dir, model_name)
