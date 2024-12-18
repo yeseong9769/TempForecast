@@ -1,5 +1,0 @@
-python train.py --model_fn ./model.pth --data_path ./cleaned_weather.csv --learning_rate 0.01
-train_loss=1.0489e-02 valid_loss=1.8394e-02, lowest_loss=1.7925e-02
-
-
-Temperature-Forecast
